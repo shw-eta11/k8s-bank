@@ -6,7 +6,7 @@ on:
     branches:
       - main
     paths:
-      - 'frontend/**'
+      - 'backend/**'
   workflow_dispatch:
     inputs:
       bump_major:
@@ -117,7 +117,7 @@ jobs:
 
           echo "Deploying image with tag: $IMAGE_TAG"
 
-          echo "$IMAGE_TAG" > frontend/VERSION
+          echo "$IMAGE_TAG" > backend/VERSION
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
 
       ############################################################
@@ -127,14 +127,14 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
         
-      - name: Build Frontend image using Docker Compose
+      - name: Build Backend image using Docker Compose
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
           export DOCKER_BUILDKIT=0
           export IMAGE_TAG=$IMAGE_TAG
-          echo "Building frontend image with tag: $IMAGE_TAG"
-          docker build -t frontend:$IMAGE_TAG .
-          docker tag frontend:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "Building backend image with tag: $IMAGE_TAG"
+          docker build -t backend:$IMAGE_TAG .
+          docker tag backend:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
   
